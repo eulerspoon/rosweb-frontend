@@ -27,7 +27,7 @@ export const useCommands = (searchParams: SearchParams = {}) => {
     };
 
     loadCommands();
-  }, [searchParams]); // Зависимость от searchParams
+  }, [searchParams]);
 
   return { commands, loading, error };
 };

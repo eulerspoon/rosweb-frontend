@@ -3,29 +3,35 @@ import { Container, Row, Col, Form, Button, Spinner, Alert, Card } from 'react-b
 import { useCommands } from '../hooks/useCommands';
 import CommandCard from '../components/CommandCard';
 import Breadcrumbs from '../components/Breadcrumbs';
+import { useDispatch, useSelector } from 'react-redux';
+import { 
+  setNameQuery, 
+  setRosCommandQuery, 
+  setSearchParams, 
+  resetFilters 
+} from '../store/slices/filterSlice';
+import { RootState } from '../store';
 
 const CommandsPage: React.FC = () => {
-  const [nameQuery, setNameQuery] = useState<string>('');
-  const [rosCommandQuery, setRosCommandQuery] = useState<string>('');
-  const [searchParams, setSearchParams] = useState<{name?: string; ros_command?: string}>({});
+  const dispatch = useDispatch();
+  const { nameQuery, rosCommandQuery, searchParams } = useSelector(
+    (state: RootState) => state.filters
+  );
   
   const { commands, loading, error } = useCommands(searchParams);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Собираем параметры поиска (только непустые значения)
     const params: {name?: string; ros_command?: string} = {};
     if (nameQuery.trim()) params.name = nameQuery.trim();
     if (rosCommandQuery.trim()) params.ros_command = rosCommandQuery.trim();
     
-    setSearchParams(params);
+    dispatch(setSearchParams(params));
   };
 
   const handleReset = () => {
-    setNameQuery('');
-    setRosCommandQuery('');
-    setSearchParams({});
+    dispatch(resetFilters());
   };
 
   const breadcrumbItems = [
