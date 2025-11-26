@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/rosweb-frontend/static/css/main.e7b8fc9c.css",
-    "main.js": "/rosweb-frontend/static/js/main.29bb7878.js",
+    "main.js": "/rosweb-frontend/static/js/main.d23286c4.js",
     "static/js/453.050d7676.chunk.js": "/rosweb-frontend/static/js/453.050d7676.chunk.js",
     "index.html": "/rosweb-frontend/index.html",
     "main.e7b8fc9c.css.map": "/rosweb-frontend/static/css/main.e7b8fc9c.css.map",
-    "main.29bb7878.js.map": "/rosweb-frontend/static/js/main.29bb7878.js.map",
+    "main.d23286c4.js.map": "/rosweb-frontend/static/js/main.d23286c4.js.map",
     "453.050d7676.chunk.js.map": "/rosweb-frontend/static/js/453.050d7676.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e7b8fc9c.css",
-    "static/js/main.29bb7878.js"
+    "static/js/main.d23286c4.js"
   ]
 }
