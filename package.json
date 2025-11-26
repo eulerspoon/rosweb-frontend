@@ -28,7 +28,8 @@
     "web-vitals": "^2.1.4",
     "workbox-webpack-plugin": "^7.4.0"
   },
-  "homepage": "https://yourusername.github.io/rosweb-frontend",
+  "homepage": "https://eulerspoon.github.io/rosweb-frontend",
+
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -54,5 +55,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
