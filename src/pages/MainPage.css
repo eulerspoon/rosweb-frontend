@@ -1,0 +1,52 @@
+.main-page-container {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.background-gif {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../../public/static/video.gif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Фиксированный фон */
+  z-index: -1;
+  opacity: 0.5; /* 40% прозрачности */
+  filter: brightness(0.8); /* Немного затемним для лучшей читаемости */
+}
+
+.content-overlay {
+  position: relative;
+  z-index: 1;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  min-height: 100vh;
+}
+
+/* Для лучшей читаемости текста */
+.text-white {
+  color: white !important;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* Полупрозрачные карточки */
+.card-transparent {
+  background-color: rgba(255, 255, 255, 0.85) !important; /* 85% непрозрачности */
+  backdrop-filter: blur(5px); /* Легкое размытие фона за карточкой */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.card-transparent .card-title {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.card-transparent .card-text {
+  color: #34495e;
+}
