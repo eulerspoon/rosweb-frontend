@@ -12,6 +12,7 @@ export interface Route {
   status: string;
   creator: number;
   creator_name: string;
+  moderator_name?: string;
   created_at: string;
   formed_at: string | null;
   approved_at: string | null;

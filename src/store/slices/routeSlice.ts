@@ -24,16 +24,53 @@ export const getCartIcon = createAsyncThunk('route/getCartIcon', async () => {
   return response.data;
 });
 
-export const getRoutes = createAsyncThunk('route/getRoutes', async () => {
-  const response = await routesAPI.getRoutes();
-  return response.data;
-});
+export const calculateWithGoService = createAsyncThunk(
+  'route/calculateWithGoService',
+  async (routeId: number, { rejectWithValue }) => {
+    try {
+      console.log('Calculating with Go service for route:', routeId);
+      
+      const response = await routesAPI.calculateWithGoService(routeId);
+      
+      console.log('Go service calculation started:', response.data);
+      
+      // Показываем уведомление пользователю
+      alert('✅ Запущен расчёт через Go-сервис! Результат появится через 5 секунд.');
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Error calling Go service:', error);
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const getRoutes = createAsyncThunk(
+  'route/getRoutes',
+  async (params?: {
+    status?: string;
+    date_from?: string;
+    date_to?: string;
+    creator_username?: string;
+  }) => {
+    console.log('getRoutes thunk called with params:', params);
+    const response = await routesAPI.getRoutes(params);
+    return response.data;
+  }
+);
 
 export const getRoute = createAsyncThunk('route/getRoute', async (id: number) => {
   const response = await routesAPI.getRoute(id);
   return response.data;
 });
 
+export const completeRoute = createAsyncThunk(
+  'route/completeRoute',
+  async ({ id, action }: { id: number; action: 'complete' | 'reject' }) => {
+    const response = await routesAPI.completeRoute(id, action);
+    return response.data;
+  }
+);
 
 export const addToRoute = createAsyncThunk(
   'route/addToRoute',
@@ -150,6 +187,35 @@ const routeSlice = createSlice({
         state.currentRoute = null;
         // Также обновляем счетчик корзины
         state.cartItemsCount = 0;
+      })
+
+      .addCase(completeRoute.fulfilled, (state, action) => {
+        // Обновляем статус заявки в списке
+        const routeId = action.meta.arg.id;
+        state.routes = state.routes.map(route => 
+          route.id === routeId 
+            ? { 
+                ...route, 
+                status: action.meta.arg.action === 'complete' ? 'completed' : 'cancelled',
+                ended_at: action.payload.ended_at,
+                comment: action.payload.comment
+              } 
+            : route
+        );
+      })
+      
+      .addCase(calculateWithGoService.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(calculateWithGoService.fulfilled, (state, action) => {
+        state.loading = false;
+        // Можно обновить сообщение или состояние
+        console.log('Go service calculation started:', action.payload);
+      })
+      .addCase(calculateWithGoService.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string || 'Ошибка при вызове Go-сервиса';
       })
 
       .addCase(updateRoute.rejected, (state, action) => {

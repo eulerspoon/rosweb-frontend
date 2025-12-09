@@ -7,7 +7,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
   getRoute, updateRouteCommand, deleteRouteCommand, formRoute, getCurrentDraft,
-  updateRoute
+  updateRoute, calculateWithGoService
 } from '../store/slices/routeSlice';
 import { RootState, AppDispatch } from '../store';
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -18,10 +18,6 @@ const RoutePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { currentRoute, loading, error } = useSelector((state: RootState) => state.route);
   const { user } = useSelector((state: RootState) => state.auth);
-  // console.log('RoutePage render, id:', id);
-  // console.log('RoutePage currentRoute:', currentRoute);
-  // console.log('RoutePage loading:', loading);
-  // console.log('RoutePage user:', user);
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [editingItem, setEditingItem] = useState<number | null>(null);
@@ -168,7 +164,24 @@ const RoutePage: React.FC = () => {
                 </Col>
                 <Col md={6}>
                   <p><strong>Создатель:</strong> {currentRoute.creator_name}</p>
-                  
+                  <p><strong>Результат:</strong> {currentRoute.result ? currentRoute.result : "не рассчитан"}</p>
+                  {/* КНОПКА РАСЧЁТА */}
+                  {!currentRoute.result && (
+                    <div className="mt-3">
+                      <Button 
+                        variant="info" 
+                        onClick={() => dispatch(calculateWithGoService(currentRoute.id))}
+                        size="sm"
+                      >
+                        <i className="bi bi-calculator me-2"></i>
+                        Рассчитать через Go-сервис
+                      </Button>
+                      <p className="text-muted mt-1 small">
+                        <i className="bi bi-info-circle me-1"></i>
+                        Расчёт займёт 5-10 секунд
+                      </p>
+                    </div>
+                  )}
                 </Col>
               </Row>
               

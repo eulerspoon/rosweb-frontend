@@ -17,7 +17,7 @@ const checkServerAvailability = async () => {
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Token ${token}` } : {};
     
-    await axios.get('http://localhost:8000/api/commands/', { 
+    await axios.get('http://localhost:8000/api/commands/', {
       timeout: 2000,
       headers 
     });
@@ -179,11 +179,16 @@ export const commandsAPI = {
 };
 
 export const routesAPI = {
-  getRoutes: () => {
+  getRoutes: (params?: {
+    status?: string;
+    date_from?: string;
+    date_to?: string;
+    creator_username?: string;
+  }) => {
     if (!isServerAvailable) {
       return Promise.resolve({ data: [] });
     }
-    return apiClient.get('/routes/');
+    return apiClient.get('/routes/', { params });
   },
   
   getRoute: (id: number) => {
@@ -206,6 +211,36 @@ export const routesAPI = {
       });
     }
     return apiClient.get(`/routes/${id}/`);
+  },
+
+  completeRoute: (id: number, action: 'complete' | 'reject') => {
+    if (!isServerAvailable) {
+      return Promise.resolve({ 
+        data: { 
+          status: `route ${action}`, 
+          ended_at: new Date().toISOString(),
+          moderator: 'mock_moderator',
+          comment: action === 'complete' ? 'Завершено.' : 'Заявка отклонена модератором'
+        } 
+      });
+    }
+    return apiClient.put(`/routes/${id}/complete_route/`, { action });
+  },
+
+  calculateWithGoService: (routeId: number) => {
+    if (!isServerAvailable) {
+      console.log('Mock: Calculating with Go service for route', routeId);
+      return Promise.resolve({ 
+        data: { 
+          status: 'processing',
+          message: 'Mock: Вычисление запущено',
+          route_id: routeId 
+        } 
+      });
+    }
+    
+    console.log('Calling Go service API for route:', routeId);
+    return apiClient.post(`/calculate-robot-position/${routeId}/`);
   },
   
   createRoute: () => {
