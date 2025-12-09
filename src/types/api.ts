@@ -14,6 +14,11 @@ export interface Route {
   creator_name: string;
   created_at: string;
   formed_at: string | null;
+  approved_at: string | null;
+  ended_at: string | null;
+  comment: string | null;
+  area: string | null;
+  result: string | null;
   route_commands: RouteCommand[];
 }
 
@@ -23,6 +28,15 @@ export interface RouteCommand {
   speed: number;
   value: number;
   quantity: number;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  is_staff: boolean;
 }
 
 export interface ApiResponse<T> {

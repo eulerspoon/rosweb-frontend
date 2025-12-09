@@ -16,11 +16,13 @@ export const useCommands = (searchParams: SearchParams = {}) => {
     const loadCommands = async () => {
       try {
         setLoading(true);
+        setError(null);
+        
         const data = await fetchCommands(searchParams);
         setCommands(data);
-      } catch (err) {
-        setError('Ошибка загрузки команд');
+      } catch (err: any) {
         console.error('Error loading commands:', err);
+        setError(err.message || 'Ошибка загрузки команд');
       } finally {
         setLoading(false);
       }
