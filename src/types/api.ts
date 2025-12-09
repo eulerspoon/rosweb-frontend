@@ -25,6 +25,7 @@ export interface Route {
 export interface RouteCommand {
   id: number;
   command: Command;
+  command_name : string;
   speed: number;
   value: number;
   quantity: number;

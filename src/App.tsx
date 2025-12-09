@@ -58,11 +58,11 @@ function App() {
                   <RoutePage />
                 </PrivateRoute>
               } />
-              <Route path="/route/current" element={
+              {/* <Route path="/route/current" element={
                 <PrivateRoute>
-                  <Navigate to="/routes" replace />
+                  <RoutePage />
                 </PrivateRoute>
-              } />
+              } /> */}
               
               {/* 404 страница */}
               <Route path="*" element={<Navigate to="/" replace />} />

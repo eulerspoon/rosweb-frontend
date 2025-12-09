@@ -1,23 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { routesAPI, commandsAPI, routeCommandsAPI } from '../../utils/api';
-
-interface RouteCommand {
-  id: number;
-  command: any;
-  speed: number;
-  value: number;
-  quantity: number;
-}
-
-interface Route {
-  id: number;
-  status: string;
-  creator: number;
-  creator_name: string;
-  created_at: string;
-  formed_at: string | null;
-  route_commands: RouteCommand[];
-}
+import { Route, RouteCommand } from '../../types/api';
 
 interface RouteState {
   currentRoute: Route | null;
@@ -81,6 +64,20 @@ export const addToRoute = createAsyncThunk(
   }
 );
 
+export const getCurrentDraft = createAsyncThunk('route/getCurrentDraft', async () => {
+  console.log('getCurrentDraft thunk STARTED');
+  const response = await routesAPI.getCurrentDraft();
+  console.log('getCurrentDraft thunk COMPLETED, data:', response.data);
+  return response.data;
+});
+
+export const updateRoute = createAsyncThunk(
+  'route/updateRoute',
+  async ({ id, data }: { id: number; data: any }) => {
+    const response = await routesAPI.updateRoute(id, data);
+    return response.data;
+  }
+);
 
 export const updateRouteCommand = createAsyncThunk(
   'route/updateRouteCommand',
@@ -113,6 +110,9 @@ const routeSlice = createSlice({
     clearRouteError: (state) => {
       state.error = null;
     },
+    clearCurrentRoute: (state) => {
+      state.currentRoute = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -127,9 +127,36 @@ const routeSlice = createSlice({
       })
       .addCase(addToRoute.fulfilled, (state, action) => {
         state.cartItemsCount += 1;
+      })
+      .addCase(getCurrentDraft.fulfilled, (state, action) => {
+        console.log('getCurrentDraft.fulfilled reducer, payload:', action.payload);
+        state.currentRoute = action.payload;
+      })
+      .addCase(getCurrentDraft.rejected, (state, action) => {
+        state.error = action.error.message || 'Ошибка загрузки черновика';
+      })
+      .addCase(updateRoute.fulfilled, (state, action) => {
+        if (state.currentRoute && state.currentRoute.id === action.payload.id) {
+          state.currentRoute = { ...state.currentRoute, ...action.payload };
+        }
+        // Также обновляем в списке routes
+        state.routes = state.routes.map(route =>
+          route.id === action.payload.id ? { ...route, ...action.payload } : route
+        );
+      })
+
+      .addCase(formRoute.fulfilled, (state, action) => {
+        // После формирования маршрута сбрасываем текущий маршрут
+        state.currentRoute = null;
+        // Также обновляем счетчик корзины
+        state.cartItemsCount = 0;
+      })
+
+      .addCase(updateRoute.rejected, (state, action) => {
+        state.error = action.error.message || 'Ошибка обновления маршрута';
       });
   },
 });
 
-export const { setCartItemsCount, clearRouteError } = routeSlice.actions;
+export const { setCartItemsCount, clearRouteError, clearCurrentRoute } = routeSlice.actions;
 export default routeSlice.reducer;

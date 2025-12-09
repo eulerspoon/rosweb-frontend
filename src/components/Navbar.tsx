@@ -44,7 +44,7 @@ const AppNavbar: React.FC = () => {
             {isAuthenticated && (
               <>
                 <Nav.Link as={Link} to="/routes">
-                  Мои заявки
+                  Мои маршруты
                 </Nav.Link>
                 <Nav.Link as={Link} to="/profile">
                   Личный кабинет

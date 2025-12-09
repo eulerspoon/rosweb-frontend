@@ -28,7 +28,7 @@ const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
     }
     try {
       await dispatch(addToRoute(command.id)).unwrap();
-      alert(`Команда "${command.name}" добавлена в заявку!`);
+      alert(`Команда "${command.name}" добавлена в маршрут!`);
     } catch (error) {
       console.error('Error adding to route:', error);
     }
@@ -61,7 +61,7 @@ const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
             <Button 
               variant="success" 
               onClick={handleAddToRoute}
-              title="Добавить в заявку"
+              title="Добавить в маршрут"
             >
               <i className="bi bi-plus-lg"></i>
             </Button>

@@ -6,16 +6,23 @@ import { mockCommands } from '../mock/data';
 const API_BASE_URL = process.env.NODE_ENV === 'development' 
   ? 'http://localhost:8000/api' 
   : '/api';
-// const API_BASE_URL = ''; // Пустая строка для proxy
-// Проверяем доступность сервера
+
+  // Проверяем доступность сервера
 let isServerAvailable = false;
 
 // Функция для проверки доступности сервера
 const checkServerAvailability = async () => {
   try {
-    // Проверяем доступность API
-    await axios.get('http://localhost:8000/api/commands/', { timeout: 2000 });
+    // Проверяем доступность API с токеном (если есть)
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Token ${token}` } : {};
+    
+    await axios.get('http://localhost:8000/api/commands/', { 
+      timeout: 2000,
+      headers 
+    });
     isServerAvailable = true;
+    console.log('Django server is available');
   } catch (error) {
     console.warn('Django server is not available, using mock data');
     isServerAvailable = false;
@@ -271,6 +278,32 @@ export const routesAPI = {
       });
     }
     return apiClient.post(`/commands/${commandId}/add_to_route/`);
+  },
+
+  getCurrentDraft: () => {
+    console.log('getCurrentDraft called, isServerAvailable:', isServerAvailable);
+    if (!isServerAvailable) {
+      console.log('Using MOCK data for getCurrentDraft');
+      // Mock данные для черновика
+      return Promise.resolve({ 
+        data: { 
+          id: 1,
+          status: 'draft',
+          creator: 1,
+          creator_name: 'mock_user_new',
+          created_at: new Date().toISOString(),
+          formed_at: null,
+          approved_at: null,
+          ended_at: null,
+          comment: null,
+          area: null,
+          result: null,
+          route_commands: []
+        } 
+      });
+    }
+    console.log('Using REAL API for getCurrentDraft');
+    return apiClient.get('/routes/current_draft/');
   },
 };
 
