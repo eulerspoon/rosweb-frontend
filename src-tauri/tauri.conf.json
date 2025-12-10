@@ -1,37 +1,33 @@
 {
-  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "rosweb-frontend",
+  "productName": "rosweb",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.rosweb.app",
+  
   "build": {
-    "frontendDist": "../build",
-    "devUrl": "http://localhost:3000",
     "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build"
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://localhost:3000",
+    "frontendDist": "../build"
   },
+  
   "app": {
     "windows": [
       {
-        "title": "ROSWeb Desktop",
-        "width": 800,
-        "height": 600,
+        "fullscreen": false,
         "resizable": true,
-        "fullscreen": false
+        "title": "ROSWeb",
+        "width": 1200,
+        "height": 800
       }
     ],
     "security": {
       "csp": null
     }
   },
+  
   "bundle": {
     "active": true,
     "targets": "all",
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ]
+    "icon": []
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Row, Col, Form, Button, Spinner, Alert, Card } from 'react-bootstrap';
 import { useCommands } from '../hooks/useCommands';
 import CommandCard from '../components/CommandCard';
@@ -34,6 +34,14 @@ const CommandsPage: React.FC = () => {
     dispatch(resetFilters());
   };
 
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setNameQuery(e.target.value));
+  };
+
+  const handleRosCommandChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setRosCommandQuery(e.target.value));
+  };
+
   const breadcrumbItems = [
     { label: 'Команды' }
   ];
@@ -58,7 +66,7 @@ const CommandsPage: React.FC = () => {
                         type="text"
                         placeholder="Введите название команды..."
                         value={nameQuery}
-                        onChange={(e) => setNameQuery(e.target.value)}
+                        onChange={handleNameChange}
                       />
                     </Form.Group>
                   </Col>
@@ -70,7 +78,7 @@ const CommandsPage: React.FC = () => {
                         type="text"
                         placeholder="Введите ROS команду..."
                         value={rosCommandQuery}
-                        onChange={(e) => setRosCommandQuery(e.target.value)}
+                        onChange={handleRosCommandChange}
                       />
                     </Form.Group>
                   </Col>

@@ -1,61 +1,7 @@
+// utils/api.ts
 import { Command } from '../types/api';
-// import { mockCommands } from '../mock/data';
-
-// const API_BASE = '/api';
-
-// // Функция для проверки доступности бэкенда
-// const isBackendAvailable = async (): Promise<boolean> => {
-//   try {
-//     const response = await fetch(`${API_BASE}/commands/`, {
-//       method: 'GET',
-//       headers: { 'Content-Type': 'application/json' },
-//     });
-//     return response.ok;
-//   } catch {
-//     return false;
-//   }
-// };
-
-// // Получение команд с fallback на mock данные
-// export const fetchCommands = async (searchParams: {name?: string; ros_command?: string} = {}): Promise<Command[]> => {
-//   const isAvailable = await isBackendAvailable();
-  
-//   if (isAvailable) {
-//     try {
-//       // Собираем query параметры
-//       const params = new URLSearchParams();
-//       if (searchParams.name) params.append('name', searchParams.name);
-//       if (searchParams.ros_command) params.append('ros_command', searchParams.ros_command);
-      
-//       const queryString = params.toString();
-//       const url = queryString ? `${API_BASE}/commands/?${queryString}` : `${API_BASE}/commands/`;
-      
-//       const response = await fetch(url);
-//       if (!response.ok) throw new Error('API error');
-//       return await response.json();
-//     } catch (error) {
-//       console.warn('Using mock data for commands');
-//     }
-//   }
-  
-//   // Фильтрация mock данных по поисковым параметрам
-//   return mockCommands.filter(command => {
-//     const nameMatch = searchParams.name 
-//       ? command.name.toLowerCase().includes(searchParams.name.toLowerCase())
-//       : true;
-    
-//     const rosCommandMatch = searchParams.ros_command
-//       ? command.ros_command.toLowerCase().includes(searchParams.ros_command.toLowerCase())
-//       : true;
-    
-//     return nameMatch && rosCommandMatch;
-//   });
-// };
-
-// export {};
-import { getServerUrl, shouldUseMock } from './tauriApi';
+import { getServerUrl, shouldUseMock, isTauri } from './tauriApi';
 import { mockCommands } from '../mock/data';
-// import { Command } from '../types/api';
 
 interface SearchParams {
   name?: string;
@@ -66,7 +12,7 @@ export const fetchCommands = async (searchParams: SearchParams = {}): Promise<Co
   const useMock = await shouldUseMock();
   
   if (useMock) {
-    // Mock режим - используем локальные данные
+    // Mock режим - только для веб-разработки
     console.log('Using mock data for commands');
     let filteredCommands = [...mockCommands];
     
@@ -88,7 +34,7 @@ export const fetchCommands = async (searchParams: SearchParams = {}): Promise<Co
     return filteredCommands;
   }
   
-  // Реальный API режим
+  // Реальный API режим - для Tauri
   try {
     const baseUrl = await getServerUrl();
     
@@ -99,11 +45,16 @@ export const fetchCommands = async (searchParams: SearchParams = {}): Promise<Co
     const queryString = params.toString();
     const url = `${baseUrl}/api/commands${queryString ? `?${queryString}` : ''}`;
     
+    console.log('Fetching from:', url);
+    
     const response = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
+      // В Tauri не нужны credentials, так как это отдельное приложение
+      credentials: isTauri() ? 'omit' : 'include'
     });
     
     if (!response.ok) {
@@ -114,6 +65,21 @@ export const fetchCommands = async (searchParams: SearchParams = {}): Promise<Co
     return data;
   } catch (error) {
     console.error('API request failed:', error);
-    throw error;
+    // В случае ошибки возвращаем пустой массив или можем показать сообщение
+    return [];
+  }
+};
+
+// Добавим функцию для проверки доступности бэкенда
+export const checkBackendHealth = async (): Promise<boolean> => {
+  try {
+    const baseUrl = await getServerUrl();
+    const response = await fetch(`${baseUrl}/api/commands/`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    return response.ok;
+  } catch {
+    return false;
   }
 };

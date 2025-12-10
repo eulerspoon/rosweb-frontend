@@ -23,9 +23,8 @@ export const mockCommands: Command[] = [
     description: 'Поворот робота влево',
     ros_command: 'rosservice call /rotate "left"',
     status: 'active',
-    image_url: null // Тестируем изображение по умолчанию
+    image_url: null
   },
-  // ... больше mock команд
 ];
 
 export const mockRoutes: Route[] = [
@@ -36,7 +35,6 @@ export const mockRoutes: Route[] = [
     creator_name: 'user1',
     created_at: '2024-01-15T10:30:00Z',
     formed_at: '2024-01-15T10:35:00Z',
-    route_commands: [/* mock команды маршрута */]
+    route_commands: []
   },
-  // ... больше mock маршрутов
 ];
