@@ -24,8 +24,8 @@ export function isTauri(): boolean {
 }
 
 export async function getServerUrl(): Promise<string> {
-  // Для Ubuntu/localhost
-  return 'http://localhost:8000';
+  // Для Tauri приложения используем 127.0.0.1 вместо localhost
+  return 'http://127.0.0.1:8000';
 }
 
 export async function shouldUseMock(): Promise<boolean> {
